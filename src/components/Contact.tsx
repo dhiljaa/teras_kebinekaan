@@ -1,9 +1,5 @@
 import { useState, useEffect } from 'react';
 import { MapPin, Phone, Mail, Send, Facebook, Instagram, MessageCircle, ArrowRight, Sparkles, Users, Target, Award, X, ExternalLink, CheckCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent } from '@/components/ui/card';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -17,8 +13,36 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate form data
+    if (!formData.name || !formData.email || !formData.message) {
+      alert('Mohon lengkapi semua field yang diperlukan');
+      return;
+    }
+    
     setIsSubmitting(true);
     
+    // Create WhatsApp message template with proper encoding
+    const whatsappMessage = encodeURIComponent(`Halo Teras Kebinekaan,
+
+Perkenalkan saya ${formData.name} (${formData.email}).
+
+Saya ingin menyampaikan pesan/pertanyaan sebagai berikut:
+${formData.message}
+
+Mohon kesediaannya untuk memberikan tanggapan.
+
+Terima kasih atas perhatian dan waktunya.
+
+Salam hormat.`);
+    
+    // WhatsApp URL
+    const whatsappUrl = `https://wa.me/6281388719217?text=${whatsappMessage}`;
+    
+    // Immediate redirect to WhatsApp
+    window.open(whatsappUrl, '_blank');
+    
+    // Show success state and reset form
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
@@ -27,7 +51,7 @@ const Contact = () => {
       setTimeout(() => {
         setIsSubmitted(false);
       }, 3000);
-    }, 2000);
+    }, 1000);
   };
 
   const handleInputChange = (e) => {
@@ -153,10 +177,10 @@ const Contact = () => {
         <div className="grid lg:grid-cols-5 gap-12">
           {/* Contact Form */}
           <div className="lg:col-span-3 order-2 lg:order-1">
-            <Card className="bg-white shadow-2xl border-0 rounded-3xl overflow-hidden">
+            <div className="bg-white shadow-2xl border-0 rounded-3xl overflow-hidden">
               <div className="h-2" style={{ backgroundColor: '#018f43' }}></div>
               
-              <CardContent className="p-10">
+              <div className="p-10">
                 <div className="mb-10">
                   <h3 className="text-4xl font-black mb-3" style={{ color: '#018f43' }}>Kirim Pesan</h3>
                   <p className="text-gray-600 text-lg">Kami senang mendengar dari Anda</p>
@@ -176,13 +200,12 @@ const Contact = () => {
                       <label className="block text-sm font-bold text-gray-700 mb-3">
                         Nama Lengkap *
                       </label>
-                      <Input
+                      <input
                         name="name"
                         type="text"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className="h-14 text-lg bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-green-600 focus:bg-white transition-all duration-300 font-medium"
-                        style={{ '--tw-ring-color': '#018f43' }}
+                        className="w-full h-14 text-lg bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-green-600 focus:bg-white transition-all duration-300 font-medium px-4 focus:outline-none"
                         placeholder="Masukkan nama lengkap Anda"
                         required
                       />
@@ -192,13 +215,12 @@ const Contact = () => {
                       <label className="block text-sm font-bold text-gray-700 mb-3">
                         Email Address *
                       </label>
-                      <Input
+                      <input
                         name="email"
                         type="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className="h-14 text-lg bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-green-600 focus:bg-white transition-all duration-300 font-medium"
-                        style={{ '--tw-ring-color': '#018f43' }}
+                        className="w-full h-14 text-lg bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-green-600 focus:bg-white transition-all duration-300 font-medium px-4 focus:outline-none"
                         placeholder="nama@email.com"
                         required
                       />
@@ -208,26 +230,25 @@ const Contact = () => {
                       <label className="block text-sm font-bold text-gray-700 mb-3">
                         Pesan Anda *
                       </label>
-                      <Textarea
+                      <textarea
                         name="message"
                         value={formData.message}
                         onChange={handleInputChange}
                         rows={6}
-                        className="text-lg bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-green-600 focus:bg-white transition-all duration-300 resize-none font-medium"
-                        style={{ '--tw-ring-color': '#018f43' }}
+                        className="w-full text-lg bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-green-600 focus:bg-white transition-all duration-300 resize-none font-medium p-4 focus:outline-none"
                         placeholder="Ceritakan kepada kami tentang ide, pertanyaan, atau bagaimana kita bisa berkolaborasi..."
                         required
                       />
                     </div>
                     
-                    <Button 
+                    <button 
                       onClick={handleSubmit}
                       disabled={isSubmitting}
-                      className="w-full h-16 text-xl font-black text-white shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border-0 hover:scale-105"
+                      className="w-full h-16 text-xl font-black text-white shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border-0 hover:scale-105 disabled:opacity-50"
                       style={{ backgroundColor: '#018f43' }}
                     >
                       {isSubmitting ? (
-                        <div className="flex items-center">
+                        <div className="flex items-center justify-center">
                           <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
                           Mengirim...
                         </div>
@@ -237,11 +258,11 @@ const Contact = () => {
                           Kirim Pesan
                         </div>
                       )}
-                    </Button>
+                    </button>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
           {/* Contact Information */}
